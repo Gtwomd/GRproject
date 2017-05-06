@@ -22,10 +22,10 @@ d2r = lambda x: sympy.solve(w(2),sympy.Derivative(r(tau),tau,tau))[0].subs({symp
 d2theta = lambda x: sympy.solve(w(3),sympy.Derivative(theta(tau),tau,tau))[0].subs({sympy.Derivative(t(tau),tau):x[0],sympy.Derivative(r(tau),tau):x[1],sympy.Derivative(theta(tau),tau):x[2],sympy.Derivative(phi(tau),tau):x[3],t(tau):x[4],r(tau):x[5],theta(tau):x[6],phi(tau):x[7]})
 d2phi = lambda x: sympy.solve(w(4),sympy.Derivative(phi(tau),tau,tau))[0].subs({sympy.Derivative(t(tau),tau):x[0],sympy.Derivative(r(tau),tau):x[1],sympy.Derivative(theta(tau),tau):x[2],sympy.Derivative(phi(tau),tau):x[3],t(tau):x[4],r(tau):x[5],theta(tau):x[6],phi(tau):x[7]})
 
-print d2t([1,2,3,4,5,6,7,8])
-print d2r([1,2,3,4,5,6,7,8])
-print d2phi([1,2,3,4,5,6,7,8])
-print d2theta([1,2,3,4,5,6,7,8])
+# print d2t(np.array([1,2,0,0,0,8,0,0]))
+# print d2r([1,2,3,4,5,6,7,8])
+# print d2phi([1,2,3,4,5,6,7,8])
+# print d2theta([1,2,3,4,5,6,7,8])
 
 def geo(x, tau):
     '''
@@ -35,10 +35,11 @@ def geo(x, tau):
     x[3] = theta
     x[4] = dt dtau
     x[5] = dr dtau
-    x[6] = dphi dtau
-    x[7] = dtheta dtau
+    x[6] = dtheta dtau
+    x[7] = dphi dtau
     '''
     dxdtau = np.zeros_like(x)
+
     dxdtau[0] = x[4]
     dxdtau[1] = x[5]
     dxdtau[2] = x[6]
@@ -49,9 +50,9 @@ def geo(x, tau):
     dxdtau[7] = d2phi(x)
     return dxdtau
 
-tau = [.1]#np.linspace(0,1,2)
+tau = np.linspace(0,1,2)
 x0_ = np.array([1,2,0,4,5,6,0,6])
-x_ = odeint(geo, x0_, float(sys.argv[1]))
+x_ = odeint(geo, x0_, tau)
 
 print x_
 
