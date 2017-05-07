@@ -104,15 +104,17 @@ def geo(x, tau):
     dxdtau[7] = float(d2phi(*x))
     return dxdtau
 
+#####################################################
+#redefine c so as not to conflict with our import
 c = 3e8
 #####################################################
 def trajectory(r_peri, v_peri, tau_):
-	t0 = 0
+	t0 = 0 # start at t=0
 	r0 = r_peri
 	theta0 = np.pi/2
 	phi0 = 0
 	dt0 = 1
-	dr0 = 0
+	dr0 = 0 #no radial velocity at perihelion
 	dtheta0 = 0
 	dphi0 = v_peri/r_peri
 	
@@ -138,40 +140,56 @@ def trajectory(r_peri, v_peri, tau_):
 	return (t_, r_, theta_, phi_)
 
 #####################################################
-earth_r_peri = 1.471e11 #meters
-earth_v_peri = 2.98e4 #meters per second
+#calculate over one earth year
+days = 365
+percent_year = days/365
 earth_period = 3e7 #seconds
-earth_tau = np.linspace(0,1*c*earth_period, 10000)
-
-(t_, r_, theta_, phi_) = trajectory(earth_r_peri, earth_v_peri, earth_tau)
-
+tau_ = np.linspace(0,percent_year*c*earth_period, 10000)
+#####################################################
+#format planet = (r_peri [in meters], v_peri [in meters per second])
+mercury = (4.6e10, 5.898e4, 'Mercury','r') 
+venus = (1.0748e11, 3.526e4, 'Venus','g')
+earth = (1.471e11, 2.98e4, 'Earth','b')
+mars = (2.067e11, 2.65e4, 'Mars','m')
+planets = [mercury, venus, earth, mars]
+#####################################################
+#calculate trajectories
+trajects = []
+for planet in planets:
+	(t_, r_, theta_, phi_) = trajectory(planet[0],planet[1], tau_)
+	trajects.append([planet[2], t_, r_, theta_, phi_,planet[3]])
 #####################################################
 from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure(figsize=(16,9))
+fig = plt.figure(figsize=(8,8))
 ax = fig.add_subplot(111, projection='3d')
-ax.set_xlim(-2e11,2e11)
-ax.set_ylim(-2e11,2e11)
-ax.set_zlim(-2e11,2e11)
+ax.set_xlim(-2.5e11,2.5e11)
+ax.set_ylim(-2.5e11,2.5e11)
+ax.set_zlim(-2.5e11,2.5e11)
 
 #FROM MATPLOTLIB WEBSITE PLOT A SPHERE
+#plot sun
 #####################################################
 # Make data
+sun_radius = 1.4e9
 u = np.linspace(0, 2 * np.pi, 100)
 v = np.linspace(0, np.pi, 100)
-x = 1e10 * np.outer(np.cos(u), np.sin(v))
-y = 1e10 * np.outer(np.sin(u), np.sin(v))
-z = 1e10 * np.outer(np.ones(np.size(u)), np.cos(v))
+x = sun_radius * np.outer(np.cos(u), np.sin(v))
+y = sun_radius * np.outer(np.sin(u), np.sin(v))
+z = sun_radius * np.outer(np.ones(np.size(u)), np.cos(v))
 # Plot the surface
-ax.plot_surface(x, y, z, color='b')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
+ax.plot_surface(x, y, z, color='y')
+ax.set_xlabel('meters')
+ax.set_ylabel('meters')
+ax.set_zlabel('meters')
 #####################################################
-
-ax.plot(
-	r_*np.cos(phi_)*np.sin(theta_),
-	r_*np.sin(phi_)*np.sin(theta_),
-	r_*np.cos(theta_)
-	)
+for traject in trajects:
+	(name, t_, r_, theta_, phi_, color) = traject
+	x = r_*np.cos(phi_)*np.sin(theta_)
+	y = r_*np.sin(phi_)*np.sin(theta_)
+	z = r_*np.cos(theta_)
+	ax.plot(x,y,z, color = color, linestyle='--')
+	ax.text(x[-1],y[-1],z[-1], name)
+	ax.plot(x[-2:-1],y[-2:-1],z[-2:-1], marker='o', color=color)
 
 plt.show()
 
