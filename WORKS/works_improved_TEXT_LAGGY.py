@@ -199,6 +199,7 @@ trajec_data = np.array(trajec_data)
 def update_data(iteration, data, planets, speed):
 	iteration = np.minimum(iteration*speed,len(tau_)-1)
 	g = "Gammas: "
+	tau_text.set_text('{:.2f} days'.format(tau_[iteration]/(c*86400)))
 	for num,planet in enumerate(planets):
 		planet.set_data(data[num,0,iteration], data[num,1,iteration])
 		g+= str(planets_[num][2])+str(" : %.2e "%(data[num,3,iteration]-1.))
@@ -212,7 +213,9 @@ for i in xrange(trajec_data.shape[0]):
 	j, = ax.plot([],[],[],marker="o", label=planets_[i])
 	planet_draw.append(j)
 
-anim = animation.FuncAnimation(fig, update_data,100 , fargs=(trajec_data, planet_draw, int(sys.argv[1])), interval=50, blit=True)
+tau_text = ax.text(1.5e11,1.5e11,1.5e11, '{} days'.format(tau_[0]/(c*86400)))
+
+anim = animation.FuncAnimation(fig, update_data,100 , fargs=(trajec_data, planet_draw, tau_text, int(sys.argv[1])), interval=50)
 
 plt.show()
 

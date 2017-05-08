@@ -196,23 +196,32 @@ for traject in trajects:
 	trajec_data.append([x,y,z,g_])
 trajec_data = np.array(trajec_data)
 
-def update_data(iteration, data, planets, speed):
+#####################################################
+def update_data(iteration, data, planets, labels, speed):
 	iteration = np.minimum(iteration*speed,len(tau_)-1)
 	g = "Gammas: "
 	for num,planet in enumerate(planets):
+		#set planet position
 		planet.set_data(data[num,0,iteration], data[num,1,iteration])
-		g+= str(planets_[num][2])+str(" : %.2e "%(data[num,3,iteration]-1.))
 		planet.set_3d_properties(data[num,2,iteration])
+		# labels[num].set_data(data[num,0,iteration], data[num,1,iteration])
+		# labels[num].set_3d_properties(data[num,2,iteration])
+		#print gamma
+		g+= str(planets_[num][2])+str(" : %.2e "%(data[num,3,iteration]-1.))
+		#
+		
 	print g
 	return planets
-
+#####################################################
 planet_draw = []
-
+labels = []
 for i in xrange(trajec_data.shape[0]):
-	j, = ax.plot([],[],[],marker="o", label=planets_[i])
-	planet_draw.append(j)
+	label = ax.text([],[],[], name)
+	labels.append(label)
+	j, = ax.plot([],[],[],marker="o")
+	planet_draw.append(j)	
 
-anim = animation.FuncAnimation(fig, update_data,100 , fargs=(trajec_data, planet_draw, int(sys.argv[1])), interval=50, blit=True)
+anim = animation.FuncAnimation(fig, update_data,100 , fargs=(trajec_data, planet_draw, labels, int(sys.argv[1])), interval=50, blit=True)
 
 plt.show()
 
