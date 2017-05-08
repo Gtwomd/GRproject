@@ -3,6 +3,7 @@ import gravipy as gp
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.colors as colors
 from scipy.integrate import odeint
 from sympy import lambdify, N, Function, Derivative, solve
 from sympy.abc import a,b,c,d,e,f,g,h,i,j,k
@@ -138,28 +139,30 @@ def trajectory(r_peri, v_peri, tau_):
 	r_ = x_[:,1]
 	theta_ = x_[:,2]
 	phi_ = x_[:,3]
+	g_ = x_[:,4]
 
-	return (t_, r_, theta_, phi_)
+	return (t_, r_, theta_, phi_, g_)
 
 #####################################################
 #calculate over one earth year
 days = 365
 percent_year = days/365
 earth_period = 3e7 #seconds
-tau_ = np.linspace(0,percent_year*c*earth_period, 10000)
+percent_year = (percent_year if len(sys.argv) <= 2 else float(sys.argv[2]))
+tau_ = np.linspace(0,percent_year*c*earth_period, 10000*percent_year)
 #####################################################
 #format planet = (r_peri [in meters], v_peri [in meters per second])
 mercury = (4.6e10, 5.898e4, 'Mercury','r') 
 venus = (1.0748e11, 3.526e4, 'Venus','g')
 earth = (1.471e11, 2.98e4, 'Earth','b')
 mars = (2.067e11, 2.65e4, 'Mars','m')
-planets = [mercury, venus, earth, mars]
+planets_ = [mercury, venus, earth, mars]
 #####################################################
 #calculate trajectories
 trajects = []
-for planet in planets:
-	(t_, r_, theta_, phi_) = trajectory(planet[0],planet[1], tau_)
-	trajects.append([planet[2], t_, r_, theta_, phi_,planet[3]])
+for planet in planets_:
+	(t_, r_, theta_, phi_, g_) = trajectory(planet[0],planet[1], tau_)
+	trajects.append([planet[2], t_, r_, theta_, phi_, g_, planet[3]])
 #####################################################
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure(figsize=(8,8))
@@ -186,28 +189,31 @@ ax.set_zlabel('meters')
 #####################################################
 trajec_data = []
 for traject in trajects:
-	(name, t_, r_, theta_, phi_, color) = traject
+	(name, t_, r_, theta_, phi_, g_, color) = traject
 	x = r_*np.cos(phi_)*np.sin(theta_)
 	y = r_*np.sin(phi_)*np.sin(theta_)
 	z = r_*np.cos(theta_)
-	trajec_data.append([x,y,z])
+	trajec_data.append([x,y,z,g_])
 trajec_data = np.array(trajec_data)
 
 def update_data(iteration, data, planets,speed):
 	iteration = np.minimum(iteration*speed,len(tau_)-1)
+	g = "Gammas: "
 	for num,planet in enumerate(planets):
 		planet.set_data(data[num,0,iteration], data[num,1,iteration])
+		g+= str(planets_[num][2])+str(" : %.2e "%(data[num,3,iteration]-1.))
 		planet.set_3d_properties(data[num,2,iteration])
+	print g
 	return planets
 
 planet_draw = []
 
 for i in xrange(trajec_data.shape[0]):
-	j, = ax.plot([],[],[],marker="o")
+	j, = ax.plot([],[],[],marker="o", label=planets_[i])
 	planet_draw.append(j)
 	
 
-anim = animation.FuncAnimation(fig, update_data, int(sys.argv[1]), fargs=(trajec_data, planet_draw, 100), interval=50, blit=True)
+anim = animation.FuncAnimation(fig, update_data,100 , fargs=(trajec_data, planet_draw, int(sys.argv[1])), interval=50, blit=True)
 
 plt.show()
 
