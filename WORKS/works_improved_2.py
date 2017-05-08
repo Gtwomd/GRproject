@@ -2,10 +2,12 @@ from __future__ import division
 import gravipy as gp
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 from scipy.integrate import odeint
 from sympy import lambdify, N, Function, Derivative, solve
 from sympy.abc import a,b,c,d,e,f,g,h,i,j,k
 from sympy.utilities.lambdify import lambdify, implemented_function
+import sys
 
 rs = 2.95e3 #schwarzchild radius of sun
 
@@ -182,14 +184,30 @@ ax.set_xlabel('meters')
 ax.set_ylabel('meters')
 ax.set_zlabel('meters')
 #####################################################
+trajec_data = []
 for traject in trajects:
 	(name, t_, r_, theta_, phi_, color) = traject
 	x = r_*np.cos(phi_)*np.sin(theta_)
 	y = r_*np.sin(phi_)*np.sin(theta_)
 	z = r_*np.cos(theta_)
-	ax.plot(x,y,z, color = color, linestyle='--')
-	ax.text(x[-1],y[-1],z[-1], name)
-	ax.plot(x[-2:-1],y[-2:-1],z[-2:-1], marker='o', color=color)
+	trajec_data.append([x,y,z])
+trajec_data = np.array(trajec_data)
+
+def update_data(iteration, data, planets,speed):
+	iteration = np.minimum(iteration*speed,len(tau_)-1)
+	for num,planet in enumerate(planets):
+		planet.set_data(data[num,0,iteration], data[num,1,iteration])
+		planet.set_3d_properties(data[num,2,iteration])
+	return planets
+
+planet_draw = []
+
+for i in xrange(trajec_data.shape[0]):
+	j, = ax.plot([],[],[],marker="o")
+	planet_draw.append(j)
+	
+
+anim = animation.FuncAnimation(fig, update_data, int(sys.argv[1]), fargs=(trajec_data, planet_draw, 100), interval=50, blit=True)
 
 plt.show()
 
