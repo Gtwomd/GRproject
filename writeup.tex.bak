@@ -1,0 +1,20 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, fullpage, geometry}
+
+\title{Numerical Simulations on the Nature of the Universe}
+\date{}
+\author{Arvi Gjoka}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We attempted to create a gravitational metric plotter. Given initial conditions for test particles and a metric, our program simulates the time evolution of the system. We tested this program on the Schwaszchild metric for initial conditions of Mercury, Venus, Earth and Mars. The resulting simulation was qualitatively accurate and an examination of the $\delta \gamma$ (difference from static value of 1) values for  the test particles reveals that as the particles approach the metric singularity, the values increase which reflects the velocity increase. This agrees with Kepler's 3rd law, as particles have highest velocity closes to the center of orbit.
+\end{abstract}
+
+\section*{Assumptions}
+The first main assumption of our system is an analytic metric. Given a mass distribution, one can solve the Einstein field equations for an analytic or numerical metric. Our application can only take in an analytic metric. This means that in order to not disturb the metric, either all particles have to be accounted for in the metric, or an assumption has to be made that the particles are test particles and they don't affect the general metric. For example, in the Schwarzchild metric, the orbiting test particle are assumed to have negligible mass.
+
+
+
+\end{document}
