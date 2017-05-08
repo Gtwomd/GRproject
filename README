@@ -1,0 +1,14 @@
+TWO SIMUATIONS
+
+For the static case, where the all of the positions are plotted for the first 4 planets, run:
+python WORKS/works_improved_STATIC.py
+
+For the animation, run:
+python WORKS/works_improved_2.py <speed> <number of earth years>
+where the recommended value for speed is 100, for 1 earth year
+
+ex:
+python WORKS/works_improved_2.py 100 2
+
+
+**Ignore all other files for evaluation purposes**

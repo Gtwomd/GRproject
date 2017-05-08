@@ -17,6 +17,8 @@ The first main assumption of our system is an analytic metric. Given a mass dist
 
 Another assumption for the plotting was that the gammas were small, which means that coordinate time is the same as proper time. We did this because since we did numerical integration over $\tau$ given a fixed timestep, all of the calculated coordinate times were different. Since solving a problem of asynchronous plotting is a programming challenge worth a secondary project, we assumed the $\gamma$ were small and that coordinate time was the same as proper time. For orbiting planet-like particles, this is very approximately true. By printing the $\delta \gamma = \gamma - 1$ to sys.stdout, we demonstrated that this was indeed the case for our test particles.
 
+A third assumption is that all motion is planar in $\theta = \frac{\pi}{2}$. This simplified the metric, however the same simulation could be done with a fully general Schwarzchild metric.
+
 \section*{Methodology}
 We used the following libraries: Scipy, Sympy, Gravipy, Numpy, Matplotlib.
 
@@ -25,7 +27,7 @@ We assumed a starting general metric. To test and write the program, we used the
 Then we converted the symbolic ODE's into numerical ones. We used reduction of order to convert 4 second order differential equations into 8 first order ones. Then, we utilized Scipy's odeint function to do a numerical integration for $\tau$ from 0 to 1 earth year in seconds. From that, we got a set of 4 coordinates for each timestep of proper time. We plotted x, y, z for each proper time timestep given a set of initial conditions (choice of $\tau$ over t explained in the assumptions). $\delta \tau$ was also printed out, in order to validate how gamma changes from stationary (choice of $\delta \tau$ over $\tau$ to examine low velocity).
 
 \section*{Conclusion}
-We used our proposed system to estimate the trajectories of the first 4 planets of the solar system using the Schwarzchild metric and plotted them in an animation. Initial conditions were taken from online references. The trajectory shapes agree with elliptical orbits. There is no apparent procession, which is expected for simulation of a year for the first 4 planets. The $\delta \gamma$ values agree with the velocities of the particles.
+We used our proposed system to estimate the trajectories of the first 4 planets of the solar system using the Schwarzchild metric and plotted them in an animation. Initial conditions were taken from online references. The trajectory shapes agree with elliptical orbits. There is no apparent procession, which is not expected for simulation of a year for the first 4 planets. The $\delta \gamma$ values agree with the velocities of the particles.
 
 The next steps would be to try and use different metrics. One such metric is the FLRW metric of the universe, where we can use many test masses and see how the system evolves over time. Yet another thing would be to populate the Schwarzchild metric with a flow of test particles and examine the resulting geodesics. This, however, would require asynchronous plotting in order to preserve true relative positions of the particles as they approach relativistic masses.
 
