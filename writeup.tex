@@ -13,8 +13,21 @@ We attempted to create a gravitational metric plotter. Given initial conditions 
 \end{abstract}
 
 \section*{Assumptions}
-The first main assumption of our system is an analytic metric. Given a mass distribution, one can solve the Einstein field equations for an analytic or numerical metric. Our application can only take in an analytic metric. This means that in order to not disturb the metric, either all particles have to be accounted for in the metric, or an assumption has to be made that the particles are test particles and they don't affect the general metric. For example, in the Schwarzchild metric, the orbiting test particle are assumed to have negligible mass (therefore no interation with one another).
+The first main assumption of our system is an analytic metric. Given a mass distribution, one can solve the Einstein field equations for an analytic or numerical metric. Our application can only take in an analytic metric. This means that in order to not disturb the metric, either all particles have to be accounted for in the metric, or an assumption has to be made that the particles are test particles and they don't affect the general metric. For example, in the Schwarzchild metric, the orbiting test particle are assumed to have negligible mass (therefore no interaction with one another).
 
+Another assumption for the plotting was that the gammas were small, which means that coordinate time is the same as proper time. We did this because since we did numerical integration over $\tau$ given a fixed timestep, all of the calculated coordinate times were different. Since solving a problem of asynchronous plotting is a programming challenge worth a secondary project, we assumed the $\gamma$ were small and that coordinate time was the same as proper time. For orbiting planet-like particles, this is very approximately true. By printing the $\delta \gamma = \gamma - 1$ to sys.stdout, we demonstrated that this was indeed the case for our test particles.
+
+\section*{Methodology}
+We used the following libraries: Scipy, Sympy, Gravipy, Numpy, Matplotlib.
+
+We assumed a starting general metric. To test and write the program, we used the Schwarzchild metric. Gravipy was used to convert a metric to geodesic equations. The general method in which this happens is to use the variational principle with dS being the line element given by the metric. Then, the Euler-Lagrange equation is used to get geodesic equations, which are second order differential equations. With 4 coordinates, we get a system of 4 equations, expressed symbolically.
+
+Then we converted the symbolic ODE's into numerical ones. We used reduction of order to convert 4 second order differential equations into 8 first order ones. Then, we utilized Scipy's odeint function to do a numerical integration for $\tau$ from 0 to 1 earth year in seconds. From that, we got a set of 4 coordinates for each timestep of proper time. We plotted x, y, z for each proper time timestep given a set of initial conditions (choice of $\tau$ over t explained in the assumptions). $\delta \tau$ was also printed out, in order to validate how gamma changes from stationary (choice of $\delta \tau$ over $\tau$ to examine low velocity).
+
+\section*{Conclusion}
+We used our proposed system to estimate the trajectories of the first 4 planets of the solar system using the Schwarzchild metric and plotted them in an animation. Initial conditions were taken from online references. The trajectory shapes agree with elliptical orbits. There is no apparent procession, which is expected for simulation of a year for the first 4 planets. The $\delta \gamma$ values agree with the velocities of the particles.
+
+The next steps would be to try and use different metrics. One such metric is the FLRW metric of the universe, where we can use many test masses and see how the system evolves over time. Yet another thing would be to populate the Schwarzchild metric with a flow of test particles and examine the resulting geodesics. This, however, would require asynchronous plotting in order to preserve true relative positions of the particles as they approach relativistic masses.
 
 
 \end{document}
